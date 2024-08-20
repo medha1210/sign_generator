@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signature Generator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e0e0e0;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+            background-image: url('SFU.webp');  
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        canvas {
+            border: 2px solid #191a1b;
+            border-radius: 0px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #d3d1d1;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative; 
+        }
+
+        .font-options {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .font-options label,
+        .font-options select,
+        .font-options input {
+            margin: 5px;
+            font-size: 16px;
+        }
+
+        .font-options select,
+        .font-options input {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            transition: border-color 0.3s ease;
+        }
+
+        .font-options select:focus,
+        .font-options input:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+            transition: background-color 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background-color: #0056b3;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .clear-btn {
+            background-color: #dc3545;
+           
+        }
+
+        .clear-btn:hover {
+            background-color: #c82333;
+        }
+
+        .download-btn {
+            background-color:  #dc3545;
+        }
+
+        .download-btn:hover {
+            background-color:#c82333;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 90%;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Signature Generator</h1>
+
+        <!-- Canvas for Drawing -->
+        <canvas id="signatureCanvas" width="500" height="200"></canvas>
+        <br>
+        <button class="clear-btn" onclick="clearCanvas()">Clear</button>
+
+        <!-- Font Options -->
+        <div class="font-options">
+            <label for="nameInput">Enter Name:</label>
+            <input type="text" id="nameInput" oninput="generateFontSignature()" placeholder="Type your name here">
+            <label for="fontSelect">Choose Font:</label>
+            <select id="fontSelect" onchange="generateFontSignature()">
+                <option value="Arial">Arial</option>
+                <option value="Cursive">Cursive</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Trebuchet MS">Trebuchet MS</option>
+                <option value="Lucida Console">Lucida Console</option>
+                <option value="Brush Script MT">Brush Script MT</option>
+                <option value="Comic Sans MS">Comic Sans MS</option>
+                <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Segoe UI</option>
+                <option value="'Roboto', sans-serif">Roboto</option>
+                <option value="'Open Sans', sans-serif">Open Sans</option>
+                <option value="'Lora', serif">Lora</option>
+                <option value="'Playfair Display', serif">Playfair Display</option>
+                <option value="'Raleway', sans-serif">Raleway</option>
+            </select>
+        </div>
+
+        <!-- Download Button -->
+        <button class="download-btn" onclick="downloadSignature()">Download Signature</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('signatureCanvas');
+        const ctx = canvas.getContext('2d');
+
+        let drawing = false;
+
+        // Drawing on Canvas
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('mousemove', draw);
+
+        function startDrawing() { drawing = true; }
+        function stopDrawing() { drawing = false; ctx.beginPath(); }
+        function draw(event) {
+            if (!drawing) return;
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(event.clientX - canvas.offsetLeft, event.clientY - canvas.offsetTop);
+        }
+
+        // Clear Canvas
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Font-based Signature
+        function generateFontSignature() {
+            clearCanvas();
+            const name = document.getElementById('nameInput').value;
+            const font = document.getElementById('fontSelect').value;
+            ctx.font = `40px ${font}`;
+            ctx.fillText(name, 50, 100);
+        }
+
+        // Download Signature
+        function downloadSignature() {
+            const link = document.createElement('a');
+            link.download = 'signature.png';
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+    </script>
+</body>
+</html>
